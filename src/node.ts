@@ -1,5 +1,9 @@
 import type { SqlParam } from "./param";
-import { SqlFragment } from "./runtime/fragment";
+
+const FRAGMENT_SYMBOL = "tsx-sql.fragment";
+
+// SQL fragments are transparent wrappers for <>...</>.
+export const SqlFragment = Symbol.for(FRAGMENT_SYMBOL);
 
 // Any piece of SQL content that compile(...) knows how to read.
 // You can write:
@@ -9,16 +13,9 @@ import { SqlFragment } from "./runtime/fragment";
 // Nested tags are also SqlNode values, so children can contain more elements.
 export type SqlNode = string | SqlParam | SqlElement | SqlNode[];
 
-// The props object passed into a SQL component.
-// You can write:
-//   <If test={name}>AND name = { $("Tom") }</If>
-// TSX calls If with props shaped like:
-//   { test: name, children: ["AND name = ", SqlParam] }
-// Each tag can extend this base shape with its own required props.
-export type SqlComponentProps = {
-  children?: SqlNode;
-  [name: string]: unknown;
-};
+type SqlProps = Record<string, unknown>;
+
+export type SqlComponentProps = SqlProps & { children?: SqlNode };
 
 // A function that can be used as a TSX SQL tag.
 // You can write:
@@ -34,19 +31,21 @@ export type SqlComponent = (props: SqlComponentProps) => SqlNode;
 //   { type: If, props: { test: name, children: ["AND name = ", SqlParam] } }
 // Fragment elements use SqlFragment as their type and only wrap children.
 export interface SqlElement {
+  kind: "element";
   type: typeof SqlFragment | SqlComponent;
-  props: SqlComponentProps;
+  props: SqlProps;
+  children?: SqlNode;
 }
 
 // TypeScript calls this through jsx/jsxs/jsxDEV after compiling TSX.
 // We keep the node shape tiny: just the tag/component type and its props.
-export function createNode(type: SqlElement["type"], props: SqlElement["props"] | null): SqlElement {
-  return {
-    type,
-    props: props ?? {}
-  };
-}
+export function createNode(type: SqlElement["type"], props: (SqlProps & { children?: SqlNode }) | null): SqlElement {
+  const { children, ...restProps } = props ?? {};
 
-export function isSqlElement(input: unknown): input is SqlElement {
-  return typeof input === "object" && input !== null && "type" in input && "props" in input;
+  return {
+    kind: "element",
+    type,
+    props: restProps,
+    children
+  };
 }

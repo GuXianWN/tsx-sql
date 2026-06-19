@@ -9,7 +9,3 @@ export function $(value: unknown): SqlParam {
     value
   };
 }
-
-export function isSqlParam(value: unknown): value is SqlParam {
-  return typeof value === "object" && value !== null && "kind" in value && value.kind === "param";
-}

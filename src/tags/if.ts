@@ -1,7 +1,7 @@
-import type { SqlComponentProps, SqlNode } from "../vnode";
+import type { SqlComponentProps, SqlNode } from "../node";
 
 export interface IfProps extends SqlComponentProps {
-  test: unknown;
+  test: boolean;
 }
 
 export function If(props: IfProps): SqlNode {

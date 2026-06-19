@@ -1,1 +1,2 @@
-export { Fragment, jsx, jsxs, jsxDEV } from "./runtime/jsx";
+export { Fragment, jsx, jsxs } from "./jsx-runtime";
+export { createNode as jsxDEV } from "./node";
