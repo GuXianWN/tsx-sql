@@ -2,11 +2,34 @@
   "name": "tsx-sql",
   "version": "0.1.0",
   "description": "Compile TSX SQL fragments into parameterized SQL.",
+  "keywords": [
+    "sql",
+    "tsx",
+    "jsx",
+    "typescript",
+    "mybatis",
+    "query-builder"
+  ],
+  "author": "GuXianWN",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuXianWN/tsx-sql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GuXianWN/tsx-sql/issues"
+  },
+  "homepage": "https://github.com/GuXianWN/tsx-sql#readme",
   "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "packageManager": "pnpm@9.15.0",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "exports": {
     ".": {
@@ -27,6 +50,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "prepublishOnly": "pnpm test && pnpm typecheck && pnpm build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
